@@ -1,0 +1,34 @@
+version: '2.0'
+
+services:
+  mongo1:
+    image: mongo:3.3
+    ports:
+      - "27020:27020"
+    expose:
+      - "27020"
+    entrypoint: [ "/usr/bin/mongod", "--replSet", "rstests", "--smallfiles", "--noprealloc" , "--port" , "27020" , "--bind_ip" , "0.0.0.0", "--rest" ]
+  mongo2:
+    image: mongo:3.3
+    ports:
+      - "27018:27018"
+    expose:
+      - "27018"
+    entrypoint: [ "/usr/bin/mongod", "--replSet", "rstests", "--smallfiles", "--noprealloc" , "--port" , "27018" , "--bind_ip" , "0.0.0.0" , "--rest" ]
+    depends_on:
+      - mongo1
+  mongo3:
+    image: mongo:3.3
+    ports:
+      - "27019:27019"
+    expose:
+      - "27019"
+    entrypoint: [ "/usr/bin/mongod", "--replSet", "rstests", "--smallfiles", "--noprealloc" , "--port" , "27019" , "--bind_ip" , "0.0.0.0" , "--rest" ]
+    depends_on:
+      - mongo1
+  mongosetup:
+    build: .
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
